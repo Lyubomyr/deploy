@@ -1,0 +1,6 @@
+check system app.scale.pm group system
+  if memory usage > 99% for 3 cycles then exec "/etc/monit/slack_notifications.sh" else if succeeded then exec "/etc/monit/slack_notifications.sh"
+  if swap usage > 99% for 3 cycles then exec "/etc/monit/slack_notifications.sh" else if succeeded then exec "/etc/monit/slack_notifications.sh"
+  if cpu usage (user) > 90% for 3 cycles then exec "/etc/monit/slack_notifications.sh" else if succeeded then exec "/etc/monit/slack_notifications.sh"
+  if cpu usage (system) > 70% for 3 cycles then exec "/etc/monit/slack_notifications.sh" else if succeeded then exec "/etc/monit/slack_notifications.sh"
+  if cpu usage (wait) > 50% for 3 cycles then exec "/etc/monit/slack_notifications.sh" else if succeeded then exec "/etc/monit/slack_notifications.sh"

@@ -1,0 +1,4 @@
+check process postgresql
+  matching "postgresql"
+  mode passive
+  if failed host "belighted-pg-1.cwmi3vkaeuiq.eu-west-1.rds.amazonaws.com" port 5432 protocol pgsql then exec "/etc/monit/slack_notifications.sh" else if succeeded then exec "/etc/monit/slack_notifications.sh"

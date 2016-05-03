@@ -1,0 +1,22 @@
+working_directory fetch(:current_path)
+
+# Set unicorn options
+worker_processes 2
+preload_app true
+timeout 30
+
+# Set up socket location
+listen "#{fetch(:shared_path)}/sockets/unicorn.sock", :backlog => 64
+
+# Logging
+stderr_path "#{fetch(:current_path)}/log/unicorn.stderr.log"
+stdout_path "#{fetch(:current_path)}/log/unicorn.stdout.log"
+
+# Set master PID location
+pid "#{fetch(:shared_path)}/pids/unicorn.pid"
+
+# Force the bundler gemfile environment variable to
+# reference the capistrano "current" symlink
+before_exec do |_|
+  ENV["BUNDLE_GEMFILE"] = File.join(root, 'Gemfile')
+end

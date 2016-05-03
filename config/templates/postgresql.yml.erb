@@ -1,0 +1,8 @@
+<%= fetch :pg_env %>:
+  adapter: postgresql
+  encoding: <%= pg_encoding %>
+  database: <%= pg_database %>
+  pool: <%= pg_pool %>
+  username: <%= pg_user %>
+  password: '<%= pg_password %>'
+  host: <%= pg_host %>

@@ -1,0 +1,16 @@
+set daemon 30
+
+set logfile /var/log/monit.log
+set idfile /var/lib/monit/id
+set statefile /var/lib/monit/state
+
+set eventqueue
+    basedir /var/lib/monit/events
+    slots 100
+
+set httpd port 2812 and
+  allow scale:"H7d9L:@$d#34sda"
+  use address localhost  # only accept connection from localhost
+  allow localhost
+
+include /etc/monit/conf.d/*

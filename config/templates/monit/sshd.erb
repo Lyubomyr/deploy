@@ -1,0 +1,8 @@
+check process sshd with
+  pidfile /run/sshd.pid
+  group system
+  start program "/etc/init.d/ssh start"
+  stop program "/etc/init.d/ssh stop"
+  if failed port 22 protocol ssh then restart
+  if 5 restarts within 5 cycles then timeout
+  if does not exist for 2 cycle then exec "/etc/monit/slack_notifications.sh" else if succeeded then exec "/etc/monit/slack_notifications.sh"

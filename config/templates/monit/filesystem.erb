@@ -1,0 +1,3 @@
+check filesystem datafs with path /dev/xvda1
+  group server
+  if space usage > 90% for 5 times within 15 cycles then exec "/etc/monit/slack_notifications.sh" else if succeeded then exec "/etc/monit/slack_notifications.sh"
