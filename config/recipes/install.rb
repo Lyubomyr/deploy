@@ -1,23 +1,29 @@
-# If you want create user use command: cap setup user=root
-# And for first installation uncomment next line
-# before "deploy:set_rails_env", "install:all"
+# To install all: cap setup install=true
+# and if you want to create user atomatically use: cap setup user=root
+# both: cap setup install=true user=root
 
 namespace :install do
-  desc "Install everything onto the server"
+  desc "Run: cap deploy:setup install=true"
   task :all do
     on roles(:all) do
-      set :user, 'root'
-      sudo "apt-get update"
-      # invoke "install:adduser"
-      invoke "install:dependencies"
-      invoke "install:nginx"
-      invoke "install:postgresql"
-      invoke "install:nodejs"
-      invoke "install:monit"
+      if ENV['user']
+        invoke("install:adduser")
+      end
+      if ENV['install'] == "true"
+        sudo "apt-get update"
+        invoke "install:dependencies"
+        invoke "install:nginx"
+        invoke "install:postgresql"
+        invoke "install:nodejs"
+        invoke "install:monit"
+        invoke "install:rbenv"
+        invoke "install:ruby"
+      end
     end
   end
 
   task :adduser do
+    desc "Run: cap deploy:setup user=root"
     on roles(:all) do
       user_name = "deploy"
       unless test(:sudo, "grep -c '^#{user_name}:' /etc/passwd")
@@ -31,6 +37,7 @@ namespace :install do
       else
         info "User already exists."
       end
+      exit
     end
   end
 
@@ -39,7 +46,7 @@ namespace :install do
       sudo "apt-get -y install build-essential openssl libreadline6 libreadline6-dev curl git-core libreadline-dev"
       sudo "apt-get -y install zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxslt1-dev automake"
       sudo "apt-get -y install libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev python-software-properties"
-      sudo "apt-get -y install libcurl4-openssl-dev libffi-dev"
+      sudo "apt-get -y install libpq-dev libcurl4-openssl-dev libffi-dev"
     end
   end
 
@@ -55,15 +62,36 @@ namespace :install do
     end
   end
 
+  task :nodejs do
+    on roles(:all) do
+      sudo "add-apt-repository -y ppa:chris-lea/node.js"
+      sudo "apt-get update"
+      sudo "apt-get -y install nodejs"
+    end
+  end
+
+  task :monit do
+    on roles(:all) do
+      sudo "apt-get -y install monit"
+    end
+  end
+
   task :rbenv do
     on roles(:all) do
-      execute "cd"
-      sudo "git clone git://github.com/sstephenson/rbenv.git ~/.rbenv"
-      sudo "echo 'export PATH=\"$HOME/.rbenv/bin:$PATH\"' >> ~/.bash_profile"
-      sudo "echo 'eval \"$(rbenv init -)\"' >> ~/.bash_profile"
-      sudo "git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build"
-      sudo "echo 'export PATH=\"$HOME/.rbenv/plugins/ruby-build/bin:$PATH\"' >> ~/.bash_profile"
-      sudo "source ~/.bash_profile"
+      execute "cd #{fetch(:user_home_path)}"
+      execute "git clone git://github.com/sstephenson/rbenv.git ~/.rbenv"
+      execute "echo 'export PATH=\"$HOME/.rbenv/bin:$PATH\"' >> ~/.bashrc"
+      execute "echo 'eval \"$(rbenv init -)\"' >> ~/.bashrc"
+      execute "git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build"
+      execute "echo 'export PATH=\"$HOME/.rbenv/plugins/ruby-build/bin:$PATH\"' >> ~/.bashrc"
+      execute "source ~/.bashrc"
+    end
+  end
+
+  task :ruby do
+    on roles(:all) do
+      execute "#{fetch(:rbenv_path)}/bin/rbenv install -v #{fetch(:rbenv_ruby)}"
+      execute "echo 'gem: --no-document' > ~/.gemrc"
     end
   end
 
@@ -86,18 +114,7 @@ namespace :install do
     end
   end
 
-  task :nodejs do
-    on roles(:all) do
-      sudo "add-apt-repository -y ppa:chris-lea/node.js"
-      sudo "apt-get update"
-      sudo "apt-get -y install nodejs"
-    end
-  end
-
-  task :monit do
-    on roles(:all) do
-      sudo "apt-get -y install monit"
-    end
-  end
-
 end
+
+# Rake::Task['deploy:updated'].prerequisites.delete('composer:install')
+# Rake::Task['deploy:updated'].actions.clear()

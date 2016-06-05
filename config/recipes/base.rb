@@ -1,3 +1,22 @@
+namespace :setup do
+  desc "Provisioning files"
+  task :all do
+    on roles(:all) do
+      invoke "yml:setup"
+      invoke "nginx:setup"
+      invoke "unicorn:setup"
+      invoke "postgresql:setup"
+    end
+  end
+end
+
+namespace :yml do
+  desc "staging.yml.erb from secrets folder"
+  task :setup do
+    template "secrets/#{fetch(:stage)}.yml.erb", fetch(:yml_conf_path)
+  end
+end
+
 def upload(from, to, opt={})
   user = opt[:user] || "root"
   group = opt[:group] || "root"

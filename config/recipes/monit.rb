@@ -4,19 +4,15 @@ namespace :monit do
     on roles(:web) do
       monit_config "monitrc", fetch(:monitrc_path)
     end
-
-    invoke "monit:scripts"
     invoke "monit:templates"
 
     invoke "monit:syntax"
     invoke "monit:reload"
   end
 
-  task :scripts do
+  task :script do
     on roles(:web) do
       script "slack_notifications.sh", "/etc/monit/slack_notifications.sh"
-      script "unicorn.sh", "/etc/init.d/unicorn"
-      script "delayed_job.sh", "/etc/init.d/delayed_job"
     end
   end
 

@@ -1,11 +1,11 @@
 #LOCAL
 set :templates_path, "config/templates"
-set :scripts_path, "config/scripts"
-set :download_path, "config/files_from_server"
+set :scripts_path, "config/templates/scripts"
+set :download_path, "files_from_server"
 
 #SERVER
 set :user_home_path, "/home/#{fetch(:user)}"
-set :app_home_path, "#{fetch(:user_home_path)}/applications/#{fetch(:application)}"
+set :app_home_path, fetch(:deploy_to)
 set :shared_path, "#{fetch(:app_home_path)}/shared"
 set :current_path, "#{fetch(:app_home_path)}/current"
 
@@ -21,3 +21,9 @@ set :unicorn_sock_path, "#{fetch(:shared_path)}/sockets/unicorn.sock"
 #MONIT
 set :monitrc_path, "/etc/monit/monitrc"
 set :monit_conf_path, "/etc/monit/conf.d"
+
+#YML
+set :yml_conf_path, "#{fetch(:shared_path)}/config/secrets.yml"
+
+#POSTGRESQL
+set :pg_templates_path, "config/templates"

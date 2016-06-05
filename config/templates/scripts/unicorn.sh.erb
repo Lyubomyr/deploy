@@ -6,22 +6,22 @@
 
 # Feel free to change any of the following variables for your app:
 
-ENV=fetch(:staging)
-USER=fetch(:user)
-USER_HOME=fetch(:user_home_path)
-APP_ROOT=$USER_HOME/current
-PID=$USER_HOME/shared/tmp/pids/unicorn.pid
+USER=<%= fetch(:user) %>
+APP_CURRENT=<%= fetch(:current_path) %>
+APP_SHARED=<%= fetch(:shared_path) %>
+
+RUBY_BIN="<%= fetch(:rbenv_path) %>/shims"
+GEM_HOME="$APP_SHARED/bundle/ruby/<%= fetch(:rbenv_ruby) %>/gems"
+
+PID=<%= fetch(:unicorn_pid_path) %>
 old_pid="$PID.oldbin"
 
-GEM_HOME="/app/shared/bundle/ruby/2.1.0/gems"
-RUBY_BIN="/home/ubuntu/.rbenv/shims"
-
 SET_PATH="PATH=$RUBY_BIN:$GEM_HOME/bin:$PATH; export GEM_HOME=$GEM_HOME"
-UNICORN_OPTS="-D -E $ENV -c $APP_ROOT/config/unicorn/production.rb"
+UNICORN_OPTS="-D -E <%= fetch(:stage) %> -c <%= fetch(:unicorn_conf_path) %>"
 
-CMD="$SET_PATH; cd $APP_ROOT && bin/bundle exec unicorn $UNICORN_OPTS"
+CMD="$SET_PATH; cd $APP_CURRENT && bin/bundle exec unicorn $UNICORN_OPTS"
 echo $CMD
-cd $APP_ROOT || exit 1
+cd $APP_CURRENT || exit 1
 
 
 sig () {
@@ -33,7 +33,7 @@ oldsig () {
 }
 
 workersig () {
-  workerpid="$USER_HOME/shared/tmp/pids/.$2.pid"
+  workerpid="$APP_SHARED/tmp/pids/.$2.pid"
 
   test -s "$workerpid" && su $USER -c "kill -$1 `cat $workerpid`"
 }
