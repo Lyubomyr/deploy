@@ -5,6 +5,7 @@ namespace :setup do
       invoke "yml:setup"
       invoke "nginx:setup"
       invoke "unicorn:setup"
+      invoke "unicorn:script"
       invoke "postgresql:setup"
     end
   end

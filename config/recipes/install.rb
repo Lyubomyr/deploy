@@ -1,7 +1,3 @@
-# To install all: cap setup install=true
-# and if you want to create user atomatically use: cap setup user=root
-# both: cap setup install=true user=root
-
 namespace :install do
   desc "Run: cap deploy:setup install=true"
   task :all do
@@ -10,14 +6,16 @@ namespace :install do
         invoke("install:adduser")
       end
       if ENV['install'] == "true"
+        invoke("install:secure_root_user")
         sudo "apt-get update"
         invoke "install:dependencies"
         invoke "install:nginx"
         invoke "install:postgresql"
         invoke "install:nodejs"
         invoke "install:monit"
-        invoke "install:rbenv"
-        invoke "install:ruby"
+        invoke "rvm1:update_rvm_key"
+        invoke "rvm1:install:rvm" # I don't know why, but script can freeze on this step. In such case stop it and run this to lines manually
+        invoke "rvm1:add_rvm_to_bash"
       end
     end
   end
@@ -38,6 +36,14 @@ namespace :install do
         info "User already exists."
       end
       exit
+    end
+  end
+
+  task :secure_root_user do
+    on roles(:all) do
+      sudo "passwd root"
+      sudo "sed -i 's/^PermitRootLogin.*$/PermitRootLogin no/' /etc/ssh/sshd_config"
+      sudo "service ssh restart"
     end
   end
 
@@ -76,6 +82,31 @@ namespace :install do
     end
   end
 
+  task :rvm_mixed_mode do
+    on roles(:all) do
+      sudo "apt-add-repository -y ppa:rael-gc/rvm"
+      sudo "apt-get update"
+      sudo "apt-get -y install rvm"
+      execute "source /etc/profile.d/rvm.sh"
+    end
+  end
+
+  task :rvm_mixed_mode_ruby do
+    on roles(:all) do
+      sudo "#{fetch(:rvm_path)} install #{fetch(:ruby_version)}"
+    end
+  end
+
+  task :rvm do
+    on roles(:all) do
+      sudo "gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys D39DC0E3"
+      # invoke "rvm1:install:rvm"
+      sudo "curl -L get.rvm.io | bash -s stable"
+      sudo "source ~/.rvm/scripts/rvm"
+      sudo "rvm requirements"
+    end
+  end
+
   task :rbenv do
     on roles(:all) do
       execute "cd #{fetch(:user_home_path)}"
@@ -88,33 +119,11 @@ namespace :install do
     end
   end
 
-  task :ruby do
+  task :rbenv_ruby do
     on roles(:all) do
       execute "#{fetch(:rbenv_path)}/bin/rbenv install -v #{fetch(:rbenv_ruby)}"
       execute "echo 'gem: --no-document' > ~/.gemrc"
     end
   end
 
-  task :rvm_mixed_mode do
-    on roles(:all) do
-      sudo "apt-add-repository -y ppa:rael-gc/rvm"
-      sudo "apt-get update"
-      sudo "apt-get -y install rvm"
-      execute "source /etc/profile.d/rvm.sh"
-    end
-  end
-
-  task :rvm_user do
-    on roles(:all) do
-      sudo "gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3"
-      # invoke "rvm1:install:rvm"
-      sudo "curl -L get.rvm.io | bash -s stable"
-      sudo "source ~/.rvm/scripts/rvm"
-      sudo "rvm requirements"
-    end
-  end
-
 end
-
-# Rake::Task['deploy:updated'].prerequisites.delete('composer:install')
-# Rake::Task['deploy:updated'].actions.clear()

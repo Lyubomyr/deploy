@@ -1,76 +1,66 @@
-#!/bin/bash
-# set -u
-# set -e
-# Example init script, this can be used with nginx, too,
-# since nginx and unicorn accept the same signals
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          unicorn
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Manage unicorn server
+# Description:       Start, stop, restart unicorn server for a specific application.
+### END INIT INFO
+set -e
 
-# Feel free to change any of the following variables for your app:
+USAGE="Usage: $0 <start|stop|restart|upgrade|rotate|force-stop>"
 
+# app settings
 USER=<%= fetch(:user) %>
-APP_CURRENT=<%= fetch(:current_path) %>
-APP_SHARED=<%= fetch(:shared_path) %>
+APP_NAME=<%= fetch(:application) %>
+APP_ROOT=<%= fetch(:app_home_path) %>
 
-RUBY_BIN="<%= fetch(:rbenv_path) %>/shims"
-GEM_HOME="$APP_SHARED/bundle/ruby/<%= fetch(:rbenv_ruby) %>/gems"
+# environment settings
+# PATH="<%= fetch(:user_home_path) %>/.rvm/gems/ruby-<%= fetch(:rvm1_ruby_version) %>/bin:$PATH"
+CMD="cd $APP_ROOT/current; <%= fetch(:rvm1_auto_script_path) %>/rvm-auto.sh <%= fetch(:rvm1_ruby_version) %> bundle exec unicorn -c config/unicorn.rb -E <%= fetch(:stage) %> -D"
+PID="$APP_ROOT/shared/pids/unicorn.pid"
+OLD_PID="$PID.oldbin"
 
-PID=<%= fetch(:unicorn_pid_path) %>
-old_pid="$PID.oldbin"
-
-SET_PATH="PATH=$RUBY_BIN:$GEM_HOME/bin:$PATH; export GEM_HOME=$GEM_HOME"
-UNICORN_OPTS="-D -E <%= fetch(:stage) %> -c <%= fetch(:unicorn_conf_path) %>"
-
-CMD="$SET_PATH; cd $APP_CURRENT && bin/bundle exec unicorn $UNICORN_OPTS"
-echo $CMD
-cd $APP_CURRENT || exit 1
-
+# make sure the app exists
+cd $APP_ROOT || exit 1
 
 sig () {
-  test -s "$PID" && su $USER -c "kill -$1 `cat $PID`"
+  test -s "$PID" && kill -$1 `cat $PID`
 }
 
 oldsig () {
-  test -s $old_pid && su $USER -c "kill -$1 `cat $old_pid`"
-}
-
-workersig () {
-  workerpid="$APP_SHARED/tmp/pids/.$2.pid"
-
-  test -s "$workerpid" && su $USER -c "kill -$1 `cat $workerpid`"
+  test -s $OLD_PID && kill -$1 `cat $OLD_PID`
 }
 
 case $1 in
-start)
-  sig 0 && echo >&2 "Already running" && exit 0
-  su $USER -c "$CMD"
-  ;;
-stop)
-  sig QUIT && exit 0
-  echo >&2 "Not running"
-  ;;
-force-stop)
-  sig TERM && exit 0
-  echo >&2 "Not running"
-  ;;
-restart|reload)
-  sig HUP && echo reloaded OK && exit 0
-  echo >&2 "Couldn't reload, starting '$CMD' instead"
-  $CMD
-  ;;
-upgrade)
-  sig USR2 && exit 0
-  echo >&2 "Couldn't upgrade, starting '$CMD' instead"
-  $CMD
-  ;;
-kill_worker)
-  workersig QUIT $2 && exit 0
-  echo >&2 "Worker not running"
-  ;;
-rotate)
-        sig USR1 && echo rotated logs OK && exit 0
-        echo >&2 "Couldn't rotate logs" && exit 1
-        ;;
-*)
-  echo >&2 "Usage: $0 <start|stop|restart|upgrade|rotate|force-stop>"
-  exit 1
-  ;;
+  start)
+    sig 0 && echo >&2 "Already running" && exit 0
+    echo "Starting $APP_NAME"
+    su - deploy -c "$CMD"
+    ;;
+  stop)
+    echo "Stopping $APP_NAME"
+    sig QUIT && exit 0
+    echo >&2 "Not running"
+    ;;
+  force-stop)
+    echo "Force stopping $APP_NAME"
+    sig TERM && exit 0
+    echo >&2 "Not running"
+    ;;
+  restart|reload|upgrade)
+    sig USR2 && echo "reloaded $APP_NAME" && exit 0
+    echo >&2 "Couldn't reload, starting '$CMD' instead"
+    su - deploy -c "$CMD"
+    ;;
+  rotate)
+    sig USR1 && echo rotated logs OK && exit 0
+    echo >&2 "Couldn't rotate logs" && exit 1
+    ;;
+  *)
+    echo >&2 $USAGE
+    exit 1
+    ;;
 esac

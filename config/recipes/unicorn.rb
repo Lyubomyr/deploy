@@ -26,7 +26,7 @@ namespace :unicorn do
     task command do
       on roles(:app), except: {no_release: true} do
         puts "/etc/init.d/#{fetch(:unicorn_name)} #{command}"
-        run "/etc/init.d/#{fetch(:unicorn_name)} #{command}"
+        sudo "/etc/init.d/#{fetch(:unicorn_name)} #{command}"
       end
     end
   end

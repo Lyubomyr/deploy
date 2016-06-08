@@ -8,7 +8,7 @@ ENV=production
 USER=ubuntu
 APP_ROOT="/app/current"
 GEM_HOME="/app/shared/bundle/ruby/2.1.0/gems"
-RUBY_BIN="/home/ubuntu/.rbenv/shims"
+RUBY_BIN="#{fetch(:rvm_home_path)}/rubies/ruby-#{fetch(:rvm1_ruby_version)}/bin"
 
 SET_PATH="PATH=$RUBY_BIN:$GEM_HOME/bin:$PATH; export GEM_HOME=$GEM_HOME"
 

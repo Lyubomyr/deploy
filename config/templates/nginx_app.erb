@@ -4,7 +4,7 @@ upstream team_work {
 
 server {
   listen 80 default;
-  server_name ;
+  server_name <%= fetch(:nginx_server_name) %>;
 
   root <%= fetch(:current_path) %>/public;
 

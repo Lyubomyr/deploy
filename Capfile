@@ -10,13 +10,15 @@ set :stages, %w(staging production)
 set :default_stage, 'staging'
 
 require 'capistrano/deploy'
+require 'rvm1/capistrano3'
 require 'capistrano/postgresql'
 require 'capistrano/rails/assets'
+require 'capistrano/faster_assets'
 require 'capistrano/rails/migrations'
 
-require 'capistrano/rbenv'
+# require 'capistrano/bundler'
+# require 'capistrano/rbenv'
 # require 'capistrano/rbenv_install'
-require 'capistrano/bundler'
 
 require 'capistrano-db-tasks'
 require 'capistrano/safe_deploy_to'
