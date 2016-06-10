@@ -22,7 +22,10 @@ def upload(from, to, opt={})
   user = opt[:user] || "root"
   group = opt[:group] || "root"
   executable = opt[:execute]
-  file = ERB.new(File.new(from).read).result(binding)
+  content = opt[:content]
+
+  file_content = content || File.new(from).read
+  file = ERB.new(file_content).result(binding)
   tmp = "/tmp/#{File.basename(from, ".erb")}"
   on roles(:all) do
     upload! StringIO.new(file), tmp
@@ -46,8 +49,9 @@ end
 def sync(from, service_name, opt={})
   to = "#{fetch(:download_path)}/#{service_name}"
   if opt.delete(:clear)
-    FileUtils.rm_rf to
-    FileUtils::mkdir_p to
+    clear_folder = opt[:recursive] ? "#{to}/#{from.split("/").last}" : to
+    FileUtils.rm_rf clear_folder
+    FileUtils::mkdir_p clear_folder
   end
   download! from, to, opt
 end

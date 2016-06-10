@@ -1,3 +1,5 @@
 .DS_Store*
 
 config/templates/secrets/*
+files_from_server/*
+log/*

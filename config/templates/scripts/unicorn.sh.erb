@@ -36,25 +36,41 @@ oldsig () {
 
 case $1 in
   start)
-    sig 0 && echo >&2 "Already running" && exit 0
+    sig 0 && echo >&2 "$APP_NAME is already running" && exit 0
     echo "Starting $APP_NAME"
-    su - deploy -c "$CMD"
+    su - $USER -c "$CMD"
     ;;
+
   stop)
-    echo "Stopping $APP_NAME"
-    sig QUIT && exit 0
+    sig QUIT && echo "Stopping $APP_NAME" exit 0
     echo >&2 "Not running"
     ;;
+
   force-stop)
-    echo "Force stopping $APP_NAME"
-    sig TERM && exit 0
+    sig TERM && echo "Force-stopping $APP_NAME" && exit 0
     echo >&2 "Not running"
     ;;
-  restart|reload|upgrade)
-    sig USR2 && echo "reloaded $APP_NAME" && exit 0
+
+  restart)
+    sig QUIT && echo "Restarting $APP_NAME" && sleep 2 && su - $USER -c "$CMD" && exit 0
     echo >&2 "Couldn't reload, starting '$CMD' instead"
-    su - deploy -c "$CMD"
+    su - $USER -c "$CMD"
     ;;
+
+  # Reloads config file (unicorn.rb) and gracefully restarts all workers. This
+  # command won't pick up application code changes if you have `preload_app
+  # true` in your unicorn.rb config file.
+  reload)
+    sig HUP && echo "Reloading configuration for $APP_NAME" && exit 0
+    echo >&2 "Couldn't reload configuration."
+    ;;
+
+  # A basic status checker. Just checks if the master process is responding to the `kill` command.
+  status)
+    sig 0 && echo >&2 "$APP_NAME is running." && exit 0
+    echo >&2 "$APP_NAME is not running."
+    ;;
+
   rotate)
     sig USR1 && echo rotated logs OK && exit 0
     echo >&2 "Couldn't rotate logs" && exit 1

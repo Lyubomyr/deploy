@@ -2,7 +2,7 @@ lock '3.5.0'
 
 server '163.172.154.233', roles: [:web, :app, :db], port: fetch(:port), user: fetch(:user), primary: true
 set :application_name, "team_work"
-set :nginx_server_name, 'aol.in.ua'
+set :nginx_server_name, "teamwork.in.ua"
 
 set :application, "#{fetch :application_name}_#{fetch :stage}"
 set :user, ENV['user'] || 'deploy'
@@ -12,7 +12,7 @@ set :branch, ENV["REVISION"] || ENV["BRANCH"] || "master"
 set :ruby_version, File.read('.ruby-version').strip
 set :rvm1_ruby_version, "#{fetch(:ruby_version)}@#{fetch(:application_name)}"
 
-set :linked_files, %w{config/database.yml config/unicorn.rb config/secrets.yml .rvmrc}
+set :linked_files, %w{config/database.yml config/unicorn.rb config/secrets.yml .ruby-version}
 set :linked_dirs, fetch(:linked_dirs, []) + %w{log pids sockets}
 
 set :log_level, :debug

@@ -9,7 +9,7 @@ end
 namespace :rvm1 do
   task :create_rvmrc do
    on roles(:all) do
-      template "rvmrc.erb", "#{fetch(:shared_path)}/.rvmrc"
+      upload "ruby-version", "#{fetch(:shared_path)}/.ruby-version", content: fetch(:rvm1_ruby_version)
     end
   end
 end
