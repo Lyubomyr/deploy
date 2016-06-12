@@ -18,8 +18,7 @@ APP_NAME=<%= fetch(:application) %>
 APP_ROOT=<%= fetch(:app_home_path) %>
 
 # environment settings
-# PATH="<%= fetch(:user_home_path) %>/.rvm/gems/ruby-<%= fetch(:rvm1_ruby_version) %>/bin:$PATH"
-CMD="cd $APP_ROOT/current; <%= fetch(:rvm1_auto_script_path) %>/rvm-auto.sh <%= fetch(:rvm1_ruby_version) %> bundle exec unicorn -c config/unicorn.rb -E <%= fetch(:stage) %> -D"
+CMD="<%= fetch(:bundle_exec) %> unicorn -c config/unicorn.rb -E <%= fetch(:rails_env) %> -D"
 PID="$APP_ROOT/shared/pids/unicorn.pid"
 OLD_PID="$PID.oldbin"
 

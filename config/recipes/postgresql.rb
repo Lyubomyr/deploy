@@ -42,12 +42,4 @@ namespace :pg do
     end
   end
 
-  def interact(command)
-    user = fetch(:user)
-    port = fetch(:port) || 22
-    cmd = "ssh -l #{user} #{host} -p #{port} -t '#{command}'"
-    info "Connecting to #{host}"
-    exec cmd
-  end
-
 end

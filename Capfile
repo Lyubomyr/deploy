@@ -19,6 +19,5 @@ require 'capistrano/rails/migrations'
 require 'capistrano-db-tasks'
 require 'capistrano/safe_deploy_to'
 require 'capistrano/ssh_doctor'
-require 'capistrano/rails/console'
 
 

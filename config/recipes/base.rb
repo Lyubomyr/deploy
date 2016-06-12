@@ -54,3 +54,9 @@ def sync(from, service_name, opt={})
   end
   download! from, to, opt
 end
+
+def interact(command)
+  cmd = "ssh -l #{fetch(:user)} #{host} -p #{fetch(:port)} -t '#{command}'"
+  info "Connecting to #{host}"
+  exec cmd
+end

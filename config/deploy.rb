@@ -28,6 +28,8 @@ set :keep_releases, 5
 load 'config/config_path.rb'
 Dir.glob('config/recipes/*.rb').each { |r| load r }
 
+set :bundle_exec, "cd #{fetch(:current_path)}; #{fetch(:rvm1_auto_script_path)}/rvm-auto.sh #{fetch(:rvm1_ruby_version)} bundle exec"
+
 namespace :deploy do
   %w[start stop restart].each do |command|
     desc "#{command} server"
