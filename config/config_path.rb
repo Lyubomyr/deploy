@@ -24,6 +24,3 @@ set :monit_conf_path, "/etc/monit/conf.d"
 
 #YML
 set :yml_conf_path, "#{fetch(:shared_path)}/config/secrets.yml"
-
-#POSTGRESQL
-set :pg_templates_path, "config/templates"

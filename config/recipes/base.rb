@@ -6,7 +6,6 @@ namespace :setup do
       invoke "nginx:setup"
       invoke "unicorn:setup"
       invoke "unicorn:script"
-      invoke "postgresql:setup"
     end
   end
 end
@@ -14,7 +13,7 @@ end
 namespace :yml do
   desc "staging.yml.erb from secrets folder"
   task :setup do
-    template "secrets/#{fetch(:stage)}.yml.erb", fetch(:yml_conf_path)
+    template "../deploy/secrets/#{fetch(:stage)}.yml.erb", fetch(:yml_conf_path)
   end
 end
 

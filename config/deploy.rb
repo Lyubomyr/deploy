@@ -11,6 +11,7 @@ set :repo_url, 'git@github.com:Lyubomyr/team_work.git'
 set :branch, ENV["REVISION"] || ENV["BRANCH"] || "master"
 set :ruby_version, File.read('.ruby-version').strip
 set :rvm1_ruby_version, "#{fetch(:ruby_version)}@#{fetch(:application_name)}"
+set :rvm1_map_bins, %w{rake gem bundle ruby}
 
 set :linked_files, %w{config/database.yml config/unicorn.rb config/secrets.yml .ruby-version}
 set :linked_dirs, fetch(:linked_dirs, []) + %w{log pids sockets}
@@ -37,11 +38,11 @@ namespace :deploy do
 end
 
 before "rvm1:hook", "install:all"
-before 'deploy:check:linked_files', 'setup:all'
 
 before 'deploy', 'rvm1:install:ruby'
 before 'deploy', 'rvm1:install:gems'
 before 'deploy', 'rvm1:alias:create'
 
+after 'postgresql:generate_database_yml', 'setup:all'
 after 'deploy:check:make_linked_dirs', 'rvm1:create_rvmrc'
 after 'deploy:publishing', 'deploy:restart'

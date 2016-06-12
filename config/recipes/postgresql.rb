@@ -1,9 +1,14 @@
 namespace :pg do
+  # Using https://github.com/capistrano-plugins/capistrano-postgresql instead of this custom stuff
+  # One known issue with this - not standart env like "prod" would not work
+  # beucase of issue: https://github.com/capistrano-plugins/capistrano-postgresql/issues/28
+
   desc "Setup all PG configuration"
-  set :pg_env, fetch(:stage)
+  # set :pg_templates_path, "deploy/config/templates"
+  set :pg_env, fetch(:rails_env)
   set :pg_encoding, "utf8"
-  set :pg_database, "#{fetch(:application)}"
-  set :pg_user, "#{fetch(:application)}"
+  set :pg_database, fetch(:application)
+  set :pg_user, fetch(:application)
   set :pg_host, "localhost"
 
   task :setup do
@@ -16,6 +21,33 @@ namespace :pg do
     on roles(:all) do
       sync "#{fetch(:shared_path)}/config/database.yml", "pg", clear: true
     end
+  end
+
+  task :psql do
+    on roles(:all) do
+      interact "sudo -u #{fetch(:pg_system_user)} psql #{fetch(:pg_system_db)} -l"
+    end
+  end
+
+  task :list do
+    on roles(:all) do
+      sudo "-u #{fetch(:pg_system_user)} psql #{fetch(:pg_system_db)} --list"
+    end
+  end
+
+  task :drop_db_and_user do
+    on roles(:all) do
+      sudo "-u #{fetch(:pg_system_user)} dropdb #{fetch(:pg_database)}"
+      sudo "-u #{fetch(:pg_system_user)} dropuser #{fetch(:pg_user)}"
+    end
+  end
+
+  def interact(command)
+    user = fetch(:user)
+    port = fetch(:port) || 22
+    cmd = "ssh -l #{user} #{host} -p #{port} -t '#{command}'"
+    info "Connecting to #{host}"
+    exec cmd
   end
 
 end

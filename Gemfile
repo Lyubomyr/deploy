@@ -1,3 +1,4 @@
+
 source 'https://rubygems.org'
 
 group :development do
@@ -9,10 +10,11 @@ group :development do
   gem 'capistrano-rbenv',           '~> 2.0'    # idiomatic rbenv support
   gem 'capistrano-postgresql',      '~> 4.2'    # plug-n-play postgresql
   gem 'capistrano-safe-deploy-to',  '~> 1.1'    # ensures deploy path for the app exists
-  gem "capistrano-db-tasks",        '~> 0.4', require: false    # copy db data from/to server
-  gem "capistrano-maintenance",     '~> 1.0', require: false
-  gem 'rvm1-capistrano3',           '~> 1.4', require: false
+  gem "capistrano-db-tasks",        '~> 0.4',   require: false    # copy db data from/to server
+  gem "capistrano-maintenance",     '~> 1.0',   require: false
+  gem 'rvm1-capistrano3',           '~> 1.4',   require: false
   gem 'capistrano-faster-assets',   '~> 1.0'
+  gem 'capistrano-rails-console'
 
   # gem 'capistrano-bundler',         '~> 1.1'    # support for bundler
   # gem 'capistrano-rbenv-install',   '~> 1.2'    # ensures the right ruby version is installed
