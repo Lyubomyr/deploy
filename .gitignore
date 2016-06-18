@@ -3,3 +3,4 @@
 config/deploy/secrets/*
 files_from_server/*
 log/*
+/db/*.sql

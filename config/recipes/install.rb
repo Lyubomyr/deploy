@@ -14,7 +14,7 @@ namespace :install do
         invoke "install:nodejs"
         invoke "install:monit"
         invoke "rvm1:update_rvm_key"
-        invoke "rvm1:install:rvm" # I don't know why, but script can freeze on this step. In such case stop it and run this to lines manually
+        invoke "rvm1:install:rvm" # I don't know why, but script can freeze on this step. In such case stop it and run this two lines manually
         invoke "rvm1:add_rvm_to_bash"
       end
     end

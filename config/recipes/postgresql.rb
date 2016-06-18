@@ -8,7 +8,7 @@ namespace :pg do
   set :pg_env, fetch(:rails_env)
   set :pg_encoding, "utf8"
   set :pg_database, fetch(:application)
-  set :pg_user, fetch(:application)
+  set :pg_user, fetch(:application_name)
   set :pg_host, "localhost"
 
   task :setup do
@@ -25,13 +25,13 @@ namespace :pg do
 
   task :psql do
     on roles(:all) do
-      interact "sudo -u #{fetch(:pg_system_user)} psql #{fetch(:pg_system_db)} -l"
+      interact "sudo -u #{fetch(:pg_system_user)} psql #{fetch(:pg_system_db)}"
     end
   end
 
   task :list do
     on roles(:all) do
-      sudo "-u #{fetch(:pg_system_user)} psql #{fetch(:pg_system_db)} --list"
+      interact "sudo -u #{fetch(:pg_system_user)} psql #{fetch(:pg_system_db)} -l"
     end
   end
 

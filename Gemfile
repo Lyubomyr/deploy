@@ -10,7 +10,7 @@ group :development do
   gem 'capistrano-rbenv',           '~> 2.0'    # idiomatic rbenv support
   gem 'capistrano-postgresql',      '~> 4.2'    # plug-n-play postgresql
   gem 'capistrano-safe-deploy-to',  '~> 1.1'    # ensures deploy path for the app exists
-  gem "capistrano-db-tasks",        '~> 0.4',   require: false    # copy db data from/to server
+  gem "capistrano-db-tasks",  git: "https://github.com/gmhawash/capistrano-db-tasks.git"
   gem "capistrano-maintenance",     '~> 1.0',   require: false
   gem 'rvm1-capistrano3',           '~> 1.4',   require: false
   gem 'capistrano-faster-assets',   '~> 1.0'

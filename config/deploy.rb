@@ -14,7 +14,13 @@ set :rvm1_ruby_version, "#{fetch(:ruby_version)}@#{fetch(:application_name)}"
 set :rvm1_map_bins, %w{rake gem bundle ruby}
 
 set :linked_files, %w{config/database.yml config/unicorn.rb config/secrets.yml .ruby-version}
-set :linked_dirs, fetch(:linked_dirs, []) + %w{log pids sockets}
+set :linked_dirs, fetch(:linked_dirs, []) + %w{log pids sockets public/uploads public/assets}
+
+set :db_local_clean, true
+set :db_remote_clean, true
+set :locals_rails_env, "development"
+set :dump_file_folder, "../db"
+set :conditionally_migrate, true
 
 set :log_level, :debug
 set :port, 22
@@ -30,15 +36,6 @@ Dir.glob('config/recipes/*.rb').each { |r| load r }
 
 set :bundle_exec, "cd #{fetch(:current_path)}; #{fetch(:rvm1_auto_script_path)}/rvm-auto.sh #{fetch(:rvm1_ruby_version)} bundle exec"
 
-namespace :deploy do
-  %w[start stop restart].each do |command|
-    desc "#{command} server"
-    task command do
-      invoke "unicorn:#{command}"
-    end
-  end
-end
-
 before "rvm1:hook", "install:all"
 
 before 'deploy', 'rvm1:install:ruby'
@@ -48,3 +45,13 @@ before 'deploy', 'rvm1:alias:create'
 after 'postgresql:generate_database_yml', 'setup:all'
 after 'deploy:check:make_linked_dirs', 'rvm1:create_rvmrc'
 after 'deploy:publishing', 'deploy:restart'
+
+module Database
+  class Local < Base
+    def initialize(cap_instance)
+      super(cap_instance)
+      @config = YAML.load(ERB.new(File.read(File.join('..', 'config', 'database.yml'))).result)[fetch(:local_rails_env).to_s]
+      puts "local #{@config}"
+    end
+  end
+end

@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/gmhawash/capistrano-db-tasks.git
+  revision: ed6a94242146dd530edfc088c83e877b9145062a
+  specs:
+    capistrano-db-tasks (0.4.1)
+      capistrano (>= 3.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -12,8 +19,6 @@ GEM
     capistrano-bundler (1.1.4)
       capistrano (~> 3.1)
       sshkit (~> 1.2)
-    capistrano-db-tasks (0.4)
-      capistrano (>= 3.0.0)
     capistrano-faster-assets (1.0.2)
       capistrano (>= 3.1)
     capistrano-harrow (0.5.1)
@@ -41,7 +46,7 @@ GEM
     rvm1-capistrano3 (1.4.0)
       capistrano (~> 3.0)
       sshkit (>= 1.2)
-    sshkit (1.10.0)
+    sshkit (1.11.0)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
     sshkit-sudo (0.1.0)
@@ -52,7 +57,7 @@ PLATFORMS
 
 DEPENDENCIES
   capistrano (~> 3.5)
-  capistrano-db-tasks (~> 0.4)
+  capistrano-db-tasks!
   capistrano-faster-assets (~> 1.0)
   capistrano-maintenance (~> 1.0)
   capistrano-postgresql (~> 4.2)
