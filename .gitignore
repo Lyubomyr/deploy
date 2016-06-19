@@ -1,6 +1,7 @@
 .DS_Store*
 
 config/deploy/secrets/*
+config/deploy.rb
 files_from_server/*
 log/*
 /db/*.sql

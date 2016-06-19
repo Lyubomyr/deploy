@@ -7,7 +7,7 @@ set :nginx_server_name, "app_name.com.ua"
 set :application, "#{fetch :application_name}_#{fetch :stage}"
 set :user, ENV['user'] || 'deploy'
 set :deploy_to, "/home/#{fetch(:user)}/applications/#{fetch(:application)}"
-set :repo_url, 'git@github.com:Lyubomyr/team_work.git'
+set :repo_url, 'git@github.com:<user_name>/<project_name>.git'
 set :branch, ENV["REVISION"] || ENV["BRANCH"] || "master"
 set :ruby_version, File.read('.ruby-version').strip
 set :rvm1_ruby_version, "#{fetch(:ruby_version)}@#{fetch(:application_name)}"
