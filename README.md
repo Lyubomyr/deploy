@@ -11,15 +11,35 @@ cap deploy
 Commands:
 =========
 
-1.   To set up environmant use
+1.   To set up environment use
     ```
-    cap <environmant> setup
+    cap <environment> setup
     ```
 2.   To set up project use
     ```
-    cap <environmant> deploy
+    cap <environment> deploy
     ```
 3.   To open PG console from local computer use
     ```
-    cap <environmant> pg:psql
+    cap <environment> pg:psql
     ```
+
+Solving problems:
+===================
+
+1.   If you faced with next issue `PG::ConnectionBad: FATAL:  password authentication failed for user "<username>"` execute next steps to resolve this problem:
+   * open project directory from console and delete next files: "db/database.yml" and "shared/config/database.yml".
+   * connect to postgres, remove database and user using next commands from console:
+     ```
+     cap production pg:psql
+
+     DROP DATABASE <application_name>_<environment>;
+
+     DROP USER <application_name>;
+     ```
+   * run next commands for creating database, user, database.yml and deploy project:
+     ```
+     cap <environment> setup
+
+     cap <environment> deploy
+     ```
