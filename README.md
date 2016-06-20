@@ -47,8 +47,11 @@ Commands:
     ```
     cap <environmant> pg:psql
     ```
-
 4.   To open rails console from local computer use
+    ```
+    cap <environmant> pg:psql
+    ```
+5.   If assets precompile took too many time
     ```
     cap <environmant> pg:psql
     ```
@@ -59,3 +62,29 @@ Assets precompile:
 If you want precompile assets faster, add next gem to your Gemfile and it will fork compilation for each CPU core:
 gem 'sprockets-derailleur', '0.0.9'
 
+
+Solving problems:
+===================
+
+1.   If you faced with next issue `PG::ConnectionBad: FATAL:  password authentication failed for user "<username>"` execute next steps to resolve this problem:
+   * open project directory from console and delete next files: "db/database.yml" and "shared/config/database.yml".
+   * connect to postgres, remove database and user using next commands from console:
+     ```
+     cap production pg:psql
+
+     DROP DATABASE <application_name>_<environment>;
+
+     DROP USER <application_name>;
+     ```
+   * run next commands for creating database, user, database.yml and deploy project:
+     ```
+     cap <environment> setup
+
+     cap <environment> deploy
+     ```
+
+
+Customization:
+==============
+
+In any moment you can change any of the script laying in deploy/config/recipes folder of add your own, enjoy!
