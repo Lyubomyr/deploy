@@ -51,9 +51,9 @@ Commands:
     ```
     cap <environmant> pg:psql
     ```
-5.   If assets precompile took too many time
+5.   If assets precompile took too many time, you can compile them locally and then copy with command:
     ```
-    cap <environmant> pg:psql
+    cap <environmant> deploy:compile_assets_locally
     ```
 
 Assets precompile:
