@@ -2,12 +2,12 @@ lock '3.5.0'
 
 server '163.172.154.233', roles: [:web, :app, :db], port: fetch(:port), user: fetch(:user), primary: true
 set :application_name, "app_name"
+set :repo_url, 'git@github.com:<user_name>/<project_name>.git'
 set :nginx_server_name, "app_name.com.ua"
 
-set :application, "#{fetch :application_name}_#{fetch :stage}"
 set :user, ENV['user'] || 'deploy'
+set :application, "#{fetch :application_name}_#{fetch :stage}"
 set :deploy_to, "/home/#{fetch(:user)}/applications/#{fetch(:application)}"
-set :repo_url, 'git@github.com:<user_name>/<project_name>.git'
 set :branch, ENV["REVISION"] || ENV["BRANCH"] || "master"
 set :ruby_version, File.read('.ruby-version').strip
 set :rvm1_ruby_version, "#{fetch(:ruby_version)}@#{fetch(:application_name)}"
@@ -45,13 +45,3 @@ before 'deploy', 'rvm1:alias:create'
 after 'postgresql:generate_database_yml', 'setup:all'
 after 'deploy:check:make_linked_dirs', 'rvm1:create_rvmrc'
 after 'deploy:publishing', 'deploy:restart'
-
-module Database
-  class Local < Base
-    def initialize(cap_instance)
-      super(cap_instance)
-      @config = YAML.load(ERB.new(File.read(File.join('..', 'config', 'database.yml'))).result)[fetch(:local_rails_env).to_s]
-      puts "local #{@config}"
-    end
-  end
-end

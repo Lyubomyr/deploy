@@ -36,6 +36,22 @@ def upload(from, to, opt={})
   end
 end
 
+def mkdir(path, opt={})
+  user = opt[:user] || fetch(:user)
+  group = opt[:group] || "root"
+
+  folders = path.split("/").reject(&:empty?)
+  path_part = path
+  folders.size.times do |i|
+    break if test("[ -d #{path_part} ]")
+    path_part = path_part[0..-2] if path_part[-1] == "/"
+    path_part = path_part[/(^.+)\//]
+  end
+  sudo "mkdir -p #{path}"
+  sudo "chmod -R 755 #{path_part}"
+  sudo "chown -R #{user}:#{group} #{path_part}"
+end
+
 def template(name, to, opt={})
   upload "#{fetch(:templates_path)}/#{name}", to, opt
 end

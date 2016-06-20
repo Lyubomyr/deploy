@@ -12,6 +12,7 @@ namespace :install do
         invoke "install:nginx"
         invoke "install:postgresql"
         invoke "install:nodejs"
+        invoke "install:bower"
         invoke "install:monit"
         invoke "rvm1:update_rvm_key"
         invoke "rvm1:install:rvm" # I don't know why, but script can freeze on this step. In such case stop it and run this two lines manually
@@ -73,6 +74,12 @@ namespace :install do
       sudo "add-apt-repository -y ppa:chris-lea/node.js"
       sudo "apt-get update"
       sudo "apt-get -y install nodejs"
+    end
+  end
+
+  task :bower do
+    on roles(:all) do
+      sudo "npm install -g bower"
     end
   end
 
