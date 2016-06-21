@@ -4,6 +4,7 @@ namespace :setup do
     on roles(:all) do
       invoke "yml:setup"
       invoke "nginx:setup"
+      invoke "nginx:configtest"
       invoke "unicorn:setup"
       invoke "unicorn:script"
     end

@@ -1,9 +1,9 @@
-upstream team_work {
+upstream <%= fetch(:application_name) %> {
   server unix:<%= fetch(:unicorn_sock_path) %> fail_timeout=0;
 }
 
 server {
-  listen 80 default;
+  listen 80;
   server_name <%= fetch(:nginx_server_name) %>;
 
   root <%= fetch(:current_path) %>/public;
@@ -17,7 +17,7 @@ server {
 
   try_files $uri/index.html $uri @unicorn;
   location @unicorn {
-      proxy_pass http://team_work;
+      proxy_pass http://<%= fetch(:application_name) %>;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
       proxy_set_header Host $http_host;
       proxy_redirect off;

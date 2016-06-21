@@ -15,4 +15,15 @@ namespace :nginx do
     end
   end
 
+  %w[start stop restart test reload force-reload status configtest rotate upgrade].each do |command|
+    desc "#{command} nginx server"
+    task command do
+      on roles(:app), except: {no_release: true} do
+        exec = "/etc/init.d/nginx #{command}"
+        puts exec
+        sudo exec
+      end
+    end
+  end
+
 end

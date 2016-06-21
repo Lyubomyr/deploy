@@ -3,7 +3,7 @@ lock '3.5.0'
 server '163.172.154.233', roles: [:web, :app, :db], port: fetch(:port), user: fetch(:user), primary: true
 set :application_name, "app_name"
 set :repo_url, 'git@github.com:<user_name>/<project_name>.git'
-set :nginx_server_name, "app_name.com.ua"
+set :nginx_server_name, "app_name.com *.also_map_subdomains.com"
 
 set :user, ENV['user'] || 'deploy'
 set :application, "#{fetch :application_name}_#{fetch :stage}"
