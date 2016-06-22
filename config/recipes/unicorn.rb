@@ -23,7 +23,7 @@ namespace :unicorn do
     end
   end
 
-  %w[start stop restart reload status force-stop].each do |command|
+  %w[start stop restart reload upgrade status force-stop].each do |command|
     desc "#{command} unicorn server"
     task command do
       on roles(:app), except: {no_release: true} do

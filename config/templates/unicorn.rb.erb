@@ -1,22 +1,45 @@
-working_directory "<%= fetch(:current_path) %>"
+root = "<%= fetch(:current_path) %>"
+pid_file = "<%= fetch(:unicorn_pid_path) %>"
+old_pid = "#{pid_file}.oldbin"
 
-# Set unicorn options
-worker_processes 2
-preload_app true
-timeout 30
-
-# Set up socket location
-listen "<%= fetch(:unicorn_sock_path) %>", :backlog => 64
-
-# Logging
+working_directory root
+stdout_path "<%= fetch(:current_path) %>/log/unicorn.stdout.log"  # Logging
 stderr_path "<%= fetch(:current_path) %>/log/unicorn.stderr.log"
-stdout_path "<%= fetch(:current_path) %>/log/unicorn.stdout.log"
+listen "<%= fetch(:unicorn_sock_path) %>", :backlog => 64   # Set up socket location
+
+worker_processes 2 # Здесь тоже в зависимости от нагрузки, погодных условий и текущей фазы луны
+preload_app true   # Мастер процесс загружает приложение, перед тем, как плодить рабочие процессы.
+timeout 30         # Usually 15 to 30 seconds. Sets the amount of time before a worker times out.
+                   # The reason you want to set a relatively low number is to prevent a long-running request from holding back other requests from being processed.
+
+
 
 # Set master PID location
-pid "<%= fetch(:unicorn_pid_path) %>"
+pid pid_file
 
-# Force the bundler gemfile environment variable to
-# reference the capistrano "current" symlink
-before_exec do |_|
-  ENV["BUNDLE_GEMFILE"] = File.join(root, 'Gemfile')
+GC.copy_on_write_friendly = true if GC.respond_to?(:copy_on_write_friendly=) # Решительно не уверен, что значит эта строка, но я решил ее оставить.
+
+before_exec do |server|
+  ENV["BUNDLE_GEMFILE"] = "#{root}/Gemfile"
+end
+
+before_fork do |server, worker|
+  # Перед тем, как создать первый рабочий процесс, мастер отсоединяется от базы.
+  defined?(ActiveRecord::Base) and
+  ActiveRecord::Base.connection.disconnect!
+
+  # Ниже идет магия, связанная с 0 downtime deploy.
+  if File.exists?(old_pid) && server.pid != old_pid
+    begin
+      Process.kill("QUIT", File.read(old_pid).to_i)
+    rescue Errno::ENOENT, Errno::ESRCH
+      # someone else did our job for us
+    end
+  end
+end
+
+after_fork do |server, worker|
+  # После того как рабочий процесс создан, он устанавливает соединение с базой.
+  defined?(ActiveRecord::Base) and
+  ActiveRecord::Base.establish_connection
 end

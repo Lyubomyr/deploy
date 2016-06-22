@@ -3,7 +3,7 @@ namespace :install do
   task :all do
     on roles(:all) do
       if ENV['user']
-        invoke("install:adduser")
+        invoke("install:adduser_nonpassword")
       end
       if ENV['install'] == "true"
         invoke("install:secure_root_user")
@@ -21,12 +21,11 @@ namespace :install do
     end
   end
 
-  task :adduser do
+  task :adduser_nonpassword do
     desc "Run: cap deploy:setup user=root"
     on roles(:all) do
-      user_name = "deploy"
-      unless test(:sudo, "grep -c '^#{user_name}:' /etc/passwd")
-        user = "deploy"
+      user = fetch(:user)
+      unless test(:sudo, "grep -c '^#{user}:' /etc/passwd")
         sudo "adduser --disabled-password --gecos '' #{user} --ingroup sudo"
         sudo "echo '#{user}  ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers"
         execute "mkdir /home/#{user}/.ssh"
@@ -35,6 +34,20 @@ namespace :install do
         info "User added! Now start script again with that user."
       else
         info "User already exists."
+      end
+      exit
+    end
+  end
+
+  task :adduser do
+    desc "Add system user with username="
+    on roles(:all) do
+      user = ENV['username'] || fetch(:user)
+      unless test(:sudo, "grep -c '^#{user}:' /etc/passwd")
+        sudo "adduser --gecos '' #{user} --ingroup sudo"
+        info "User #{user} added!"
+      else
+        info "User #{user} already exists."
       end
       exit
     end

@@ -1,12 +1,4 @@
 namespace :deploy do
-
-  %w[start stop restart].each do |command|
-    desc "#{command} server"
-    task command do
-      invoke "unicorn:#{command}"
-    end
-  end
-
   desc "compiles assets locally then rsyncs"
   task :compile_assets_locally do
     on roles(:app) do |role|
@@ -23,7 +15,6 @@ namespace :deploy do
       invoke "deploy:assets:backup_manifest"
     end
   end
-
 end
 
 
