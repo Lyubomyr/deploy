@@ -21,6 +21,7 @@ end
 def upload(from, to, opt={})
   user = opt[:user] || "root"
   group = opt[:group] || "root"
+  permissions = opt[:permissions] || "644"
   executable = opt[:execute]
   content = opt[:content]
 
@@ -29,7 +30,7 @@ def upload(from, to, opt={})
   tmp = "/tmp/#{File.basename(from, ".erb")}"
   on roles(:all) do
     upload! StringIO.new(file), tmp
-    sudo "chmod 644 #{tmp}"
+    sudo "chmod #{permissions} #{tmp}"
     sudo "chown #{user}:#{group} #{tmp}"
     # sudo "touch #{tmp}"
     sudo "chmod +x #{tmp}" if executable

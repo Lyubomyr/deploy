@@ -1,4 +1,9 @@
-check process postgresql
-  matching "postgresql"
-  mode passive
-  if failed host "belighted-pg-1.cwmi3vkaeuiq.eu-west-1.rds.amazonaws.com" port 5432 protocol pgsql then exec "/etc/monit/slack_notifications.sh" else if succeeded then exec "/etc/monit/slack_notifications.sh"
+check process postgresql with pidfile /var/lib/postgresql/9.3/main/postmaster.pid
+  group database
+  start program = "/etc/init.d/postgresql start"
+  stop program = "/etc/init.d/postgresql stop"
+  if failed unixsocket /var/run/postgresql/.s.PGSQL.5432 protocol pgsql then restart
+  if failed unixsocket /var/run/postgresql/.s.PGSQL.5432 protocol pgsql then alert
+  if failed host localhost port 5432 protocol pgsql then restart
+  if failed host localhost port 5432 protocol pgsql then alert
+  if 5 restarts within 5 cycles then timeout

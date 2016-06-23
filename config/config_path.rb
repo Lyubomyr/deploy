@@ -17,6 +17,7 @@ set :nginx_app_conf_path, "/etc/nginx/sites-enabled"
 set :unicorn_conf_path, "#{fetch(:shared_path)}/config/unicorn.rb"
 set :unicorn_pid_path, "#{fetch(:shared_path)}/pids/unicorn.pid"
 set :unicorn_sock_path, "#{fetch(:shared_path)}/sockets/unicorn.sock"
+set :unicorn_script_path, "/etc/init.d/#{fetch(:unicorn_name)}"
 
 #MONIT
 set :monitrc_path, "/etc/monit/monitrc"

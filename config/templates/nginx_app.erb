@@ -15,6 +15,13 @@ server {
     add_header Cache-Control public;
   }
 
+  location /monit/ {
+     rewrite ^/monit/(.*) /$1 break;
+     proxy_ignore_client_abort on;
+     proxy_pass   http://127.0.0.1:2812;
+     proxy_set_header Host $host;
+  }
+
   try_files $uri/index.html $uri @unicorn;
   location @unicorn {
       proxy_pass http://<%= fetch(:application_name) %>;

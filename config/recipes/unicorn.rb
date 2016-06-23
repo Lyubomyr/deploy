@@ -1,6 +1,4 @@
 namespace :unicorn do
-  set :unicorn_name, "unicorn_#{fetch(:application)}"
-
   desc "Setup all Unicorn configuration"
   task :setup do
     on roles(:all) do
@@ -11,7 +9,7 @@ namespace :unicorn do
   desc "Setup all Unicorn init.d script"
   task :script do
     on roles(:web) do
-      script "unicorn.sh.erb", "/etc/init.d/#{fetch(:unicorn_name)}"
+      script "unicorn.sh.erb", fetch(:unicorn_script_path)
     end
   end
 

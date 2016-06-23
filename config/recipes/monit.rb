@@ -1,37 +1,43 @@
 namespace :monit do
   desc "Setup all Monit configuration"
   task :setup do
-    on roles(:web) do
-      monit_config "monitrc", fetch(:monitrc_path)
-    end
+    invoke "monit:monitrc"
     invoke "monit:templates"
+
+    invoke "monit:slack_script" if fetch(:monit_notification_type).to_s == "slack"
 
     invoke "monit:syntax"
     invoke "monit:reload"
   end
 
-  task :script do
+  task :slack_script do
     on roles(:web) do
       script "slack_notifications.sh", "/etc/monit/slack_notifications.sh"
     end
   end
 
   task :templates do
-    invoke "monit:cron"
-    invoke "monit:nginx"
-    invoke "monit:system"
     invoke "monit:filesystem"
     invoke "monit:sshd"
+    invoke "monit:system"
+    invoke "monit:nginx"
     invoke "monit:unicorn"
-    invoke "monit:delayed_job"
-    # invoke "monit:postgresql"
+    invoke "monit:postgresql"
+    # invoke "monit:cron"
+    # invoke "monit:delayed_job"
+  end
+
+  task :monitrc do
+    on roles(:web) do
+      template "monit/monitrc.erb", fetch(:monitrc_path), permissions: "0700"
+    end
   end
 
   %w[cron nginx system filesystem sshd unicorn delayed_job postgresql].each do |command|
     desc "Push monit configuration for #{command} to server"
     task command do
       on roles(:web) do
-        monit_config command
+        template "monit/#{command}.erb", "#{fetch(:monit_conf_path)}/#{command}.conf"
       end
     end
   end
@@ -46,6 +52,10 @@ namespace :monit do
   end
 end
 
-def monit_config(name)
-  template "monit/#{name}.erb", "#{fetch(:monit_conf_path)}/#{name}.conf"
+def monit_notify
+  if fetch(:monit_notification_type).to_s == "slack"
+    'exec "/etc/monit/slack_notifications.sh"'
+  else
+    "alert"
+  end
 end

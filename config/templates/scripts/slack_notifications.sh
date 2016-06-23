@@ -4,8 +4,8 @@
 # set -e
 
 NAME=Monit
-MONIT_URL=https://app.scale.pm/monit/
-SLACK_URL=https://hooks.slack.com/services/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
+MONIT_URL=
+SLACK_URL=
 CHANNEL="#errors"
 EMOJI=:vertical_traffic_light:
 

@@ -15,7 +15,7 @@ namespace :nginx do
     end
   end
 
-  %w[start stop restart test reload force-reload status configtest rotate upgrade].each do |command|
+  %w[start stop restart reload force-reload status configtest rotate upgrade].each do |command|
     desc "#{command} nginx server"
     task command do
       on roles(:app), except: {no_release: true} do
