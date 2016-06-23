@@ -12,9 +12,13 @@ set :branch, ENV["REVISION"] || ENV["BRANCH"] || "master"
 set :ruby_version, File.read('.ruby-version').strip
 set :rvm1_ruby_version, "#{fetch(:ruby_version)}@#{fetch(:application_name)}"
 set :rvm1_map_bins, %w{rake gem bundle ruby}
+set :unicorn_name, "unicorn_#{fetch(:application)}"
 
 set :linked_files, %w{config/database.yml config/unicorn.rb config/secrets.yml .ruby-version}
 set :linked_dirs, fetch(:linked_dirs, []) + %w{log pids sockets public/uploads public/assets tmp/cache}
+
+set :monit_notification_type, :email # or :slack . Configure mailserver in monitrc file or slack in slack_notifications.sh
+set :monit_password, "secure_pass" # to access /monit url
 
 set :db_local_clean, true
 set :db_remote_clean, true
@@ -44,4 +48,4 @@ before 'deploy', 'rvm1:alias:create'
 
 after 'postgresql:generate_database_yml', 'setup:all'
 after 'deploy:check:make_linked_dirs', 'rvm1:create_rvmrc'
-after 'deploy:publishing', 'deploy:restart'
+after 'deploy:publishing', 'unicorn:upgrade'   # it's like restart, but with zero downtime
