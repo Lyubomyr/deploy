@@ -5,7 +5,8 @@ set :application_name, "app_name"
 set :repo_url, 'git@github.com:<user_name>/<project_name>.git'
 set :nginx_server_name, "app_name.com *.also_map_subdomains.com"
 
-set :user, ENV['user'] || 'deploy'
+set :deploy_user, 'deploy'
+set :user, ENV['user'] || fetch(:deploy_user)
 set :application, "#{fetch :application_name}_#{fetch :stage}"
 set :deploy_to, "/home/#{fetch(:user)}/applications/#{fetch(:application)}"
 set :branch, ENV["REVISION"] || ENV["BRANCH"] || "master"
@@ -41,6 +42,7 @@ Dir.glob('config/recipes/*.rb').each { |r| load r }
 set :bundle_exec, "cd #{fetch(:current_path)}; #{fetch(:rvm1_auto_script_path)}/rvm-auto.sh #{fetch(:rvm1_ruby_version)} bundle exec"
 
 before "rvm1:hook", "install:all"
+before "rvm1:install:ruby", "rvm1:install:rvm"
 
 before 'deploy', 'rvm1:install:ruby'
 before 'deploy', 'rvm1:install:gems'

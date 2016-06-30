@@ -15,8 +15,8 @@ namespace :install do
         invoke "install:bower"
         invoke "install:monit"
         invoke "rvm1:update_rvm_key"
-        invoke "rvm1:install:rvm" # I don't know why, but script can freeze on this step. In such case stop it and run this two lines manually
         invoke "rvm1:add_rvm_to_bash"
+        # invoke "rvm1:install:rvm" # freeze installation when trying to install rvm here, so will install it during deploy proccess
       end
     end
   end
@@ -24,7 +24,7 @@ namespace :install do
   task :adduser_nonpassword do
     desc "Run: cap deploy:setup user=root"
     on roles(:all) do
-      user = fetch(:user)
+      user = fetch(:deploy_user)
       unless test(:sudo, "grep -c '^#{user}:' /etc/passwd")
         sudo "adduser --disabled-password --gecos '' #{user} --ingroup sudo"
         sudo "echo '#{user}  ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers"
@@ -66,7 +66,7 @@ namespace :install do
       sudo "apt-get -y install build-essential openssl libreadline6 libreadline6-dev curl git-core libreadline-dev"
       sudo "apt-get -y install zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxslt1-dev automake"
       sudo "apt-get -y install libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev python-software-properties"
-      sudo "apt-get -y install libpq-dev libcurl4-openssl-dev libffi-dev"
+      sudo "apt-get -y install libpq-dev libcurl4-openssl-dev libffi-dev software-properties-common python-software-properties"
     end
   end
 
@@ -84,9 +84,9 @@ namespace :install do
 
   task :nodejs do
     on roles(:all) do
-      sudo "add-apt-repository -y ppa:chris-lea/node.js"
+      # sudo "add-apt-repository -y ppa:chris-lea/node.js"
       sudo "apt-get update"
-      sudo "apt-get -y install nodejs"
+      sudo "apt-get -y install nodejs npm nodejs-legacy"
     end
   end
 
