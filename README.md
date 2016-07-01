@@ -46,37 +46,43 @@ monit_notification_type - for monit motifications (:email, :slack). If you want 
 Then run:
     ```
     cap <environmant> monit:setup
+    ```
 
 This command will:
 
 1. Setup monitrc. To do this separatelly use:
     ```
     cap <environmant> monit:monitrc
+    ```
 
 2. Setup monit configs to monitor: filesystem, sshd, system, nginx, unicorn, postgresql.
 To do this separatelly use:
     ```
     cap <environmant> monit:templates"
+    ```
 
 3. If monit_notification_type seted to "slack", will setup slack notifications script.
 To do this separatelly use:
     ```
     cap <environmant> monit:slack_script"
+    ```
 
 If monit_notification_type seted to "email", you should
 
 4. Then test monit for correct cofigurations. To do this separatelly use:
     ```
     cap <environmant> monit:syntax"
+    ```
 
 5. And finally reload monit. To do this separatelly use:
     ```
-    cap <environmant> monit:reload"
-
+    cap <environmant> monit:reload
+    ```
 
 Also you can influence monit using one of the commands:
     ```
     cap <environmant> monit:[start stop restart syntax reload]
+    ```
 
 
 Nginx:
@@ -85,14 +91,17 @@ Nginx:
 To upload nginx global config and nginx project config use:
     ```
     cap <environmant> nginx:setup
+    ```
 
 To download nginx configs and be sure that it's fine use:
     ```
     cap <environmant> nginx:sync
+    ```
 
 To influence nginx server use one of next commands:
     ```
     cap <environmant> nginx:[start stop restart reload force-reload status configtest rotate upgrade]
+    ```
 
 
 Unicorn:
@@ -101,18 +110,22 @@ Unicorn:
 To upload unicorn config use:
     ```
     cap <environmant> unicorn:setup
+    ```
 
 To upload unicorn script into init.d folder use:
     ```
     cap <environmant> unicorn:script
+    ```
 
 To download unicorn configs and be sure that it's fine use:
     ```
     cap <environmant> unicorn:sync
+    ```
 
 To influence unicorn server use one of next commands:
     ```
     cap <environmant> unicorn:[start stop restart reload upgrade status force-stop]
+    ```
 
 
 Postgresql:
@@ -121,22 +134,27 @@ Postgresql:
 To upload pg config use:
     ```
     cap <environmant> pg:setup
+    ```
 
 To download pg configs and be sure that it's fine use:
     ```
     cap <environmant> pg:sync
+    ```
 
 To show lisf of current users and DBs use:
     ```
     cap <environmant> pg:list
+    ```
 
 To access psql console use:
     ```
     cap <environmant> pg:psql
+    ```
 
 To drop current db and delete current user (get that values from config) use:
     ```
-    cap <environmant> pg:drop_db_and_user
+    cap <environmant> pg:drop_db_and_user``
+    ```
 
 
 
@@ -146,6 +164,7 @@ Assets precompile:
 If you want precompile assets faster, add next gem to your Gemfile and it will fork compilation for each CPU core:
     ```
     gem 'sprockets-derailleur', '0.0.9'
+    ```
 
 If assets precompile took too many time, you can compile them locally and then copy with command:
     ```
@@ -162,22 +181,27 @@ To open PG console from local computer use
 To open rails console from local computer use
     ```
     cap <environmant> pg:psql
+    ```
 
 To download all logs from your ptoject use:
     ```
     cap <environmant> sync:logs
+    ```
 
 To download unicorn configs use:
     ```
     cap <environmant> sync:unicorn
+    ```
 
 To download nginx configs use:
     ```
     cap <environmant> sync:nginx
+    ```
 
 To download all configs and logs use:
     ```
     cap <environmant> sync:all
+    ```
 
 ( All downloaded files you can find in deploy/files_from_server folder )
 
@@ -196,12 +220,12 @@ Solving problems:
      DROP USER <application_name>;
      ```
    * run next commands for creating database, user, database.yml and deploy project:
-     ```
+
+    ```
      cap <environment> setup
 
      cap <environment> deploy
      ```
-
 
 Customization:
 ==============
