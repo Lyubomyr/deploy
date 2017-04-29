@@ -6,7 +6,7 @@ namespace :install do
         invoke("install:adduser_nonpassword")
       end
       if ENV['install'] == "true"
-        invoke("install:secure_root_user")
+        # invoke("install:secure_root_user")
         sudo "apt-get update"
         invoke "install:dependencies"
         invoke "install:nginx"
