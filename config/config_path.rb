@@ -7,6 +7,7 @@ set :download_path, "files_from_server"
 set :user_home_path, "/home/#{fetch(:user)}"
 set :app_home_path, fetch(:deploy_to)
 set :shared_path, "#{fetch(:app_home_path)}/shared"
+set :config_path, "#{fetch(:shared_path)}/config"
 set :current_path, "#{fetch(:app_home_path)}/current"
 
 #NGINX
@@ -24,4 +25,4 @@ set :monitrc_path, "/etc/monit/monitrc"
 set :monit_conf_path, "/etc/monit/conf.d"
 
 #YML
-set :yml_conf_path, "#{fetch(:shared_path)}/config/secrets.yml"
+set :yml_conf_path, "#{fetch(:config_path)}/secrets.yml"
