@@ -180,7 +180,7 @@ To open PG console from local computer use
     ```
 To open rails console from local computer use
     ```
-    cap <environmant> pg:psql
+    cap <environmant> rails:console
     ```
 
 To download all logs from your ptoject use:
