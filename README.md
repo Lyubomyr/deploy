@@ -226,6 +226,10 @@ Solving problems:
 
      cap <environment> deploy
      ```
+If this doesn't help, it can be one more issue with capistrano postgresql gem. It can be if you have multiple environment running on the same server. In such case you need replace user and password values in <project_env>/shared/config/database.yml file in your failing project to user and password from working project file.
+
+TODO: Remove this bad gem, which couse so many issues and do postgres setup manually.
+
 
 Customization:
 ==============
