@@ -2,9 +2,10 @@ namespace :nginx do
   desc "Setup all NGINX configuration"
   task :setup do
     on roles(:all) do
+      nginx_app_config = fetch(:use_certbot_ssl) ? "nginx_app_with_certbot_ssl.erb" : "nginx_app.erb"
       sudo "rm -f #{fetch(:nginx_app_conf_path)}/default"
       template "nginx.conf.erb", fetch(:nginx_conf_path)
-      template "nginx_app.erb", "#{fetch(:nginx_app_conf_path)}/#{fetch(:application)}"
+      template nginx_app_config, "#{fetch(:nginx_app_conf_path)}/#{fetch(:application)}"
     end
   end
 
