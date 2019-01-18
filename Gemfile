@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 group :development do
+  gem 'pry'
   gem 'sshkit',                     '~> 1.13'
   gem 'sshkit-sudo',                '~> 0.1'
   gem 'capistrano-ssh-doctor',      '~> 1.0'    # helps with debugging ssh-agent forwarding

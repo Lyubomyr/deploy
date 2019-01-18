@@ -1,5 +1,6 @@
 # https://github.com/capistrano-plugins
 require 'pp'
+require 'pry'
 require 'fileutils'
 require 'securerandom'
 

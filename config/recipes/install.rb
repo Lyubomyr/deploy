@@ -14,9 +14,10 @@ namespace :install do
         invoke "install:nodejs"
         invoke "install:bower"
         invoke "install:monit"
+        invoke "install:rvm_gpg"
         invoke "rvm1:update_rvm_key"
         invoke "rvm1:add_rvm_to_bash"
-        # invoke "rvm1:install:rvm" # freeze installation when trying to install rvm here, so will install it during deploy proccess
+        # invoke "install:rvm" freeze installation when trying to install rvm here, so will install it during deploy proccess
       end
     end
   end
@@ -63,10 +64,10 @@ namespace :install do
 
   task :dependencies do
     on roles(:all) do
-      sudo "apt-get -y install build-essential openssl libreadline6 libreadline6-dev curl git-core libreadline-dev"
+      sudo "apt-get -y install build-essential openssl curl git-core libreadline-dev"
       sudo "apt-get -y install zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxslt1-dev automake"
-      sudo "apt-get -y install libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev python-software-properties"
-      sudo "apt-get -y install libpq-dev libcurl4-openssl-dev libffi-dev software-properties-common python-software-properties"
+      sudo "apt-get -y install libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev"
+      sudo "apt-get -y install libpq-dev libcurl4-openssl-dev libffi-dev software-properties-common"
     end
   end
 
@@ -86,7 +87,7 @@ namespace :install do
     on roles(:all) do
       # sudo "add-apt-repository -y ppa:chris-lea/node.js"
       sudo "apt-get update"
-      sudo "apt-get -y install nodejs npm nodejs-legacy"
+      sudo "apt-get -y install nodejs npm node-gyp nodejs-dev libssl1.0-dev"
     end
   end
 
@@ -117,10 +118,15 @@ namespace :install do
     end
   end
 
+  task :rvm_gpg do
+    on roles(:all) do
+      sudo "gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB"
+    end
+  end
   task :rvm do
     on roles(:all) do
-      sudo "gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys D39DC0E3"
       # invoke "rvm1:install:rvm"
+      sudo "gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys D39DC0E3"
       sudo "curl -L get.rvm.io | bash -s stable"
       sudo "source ~/.rvm/scripts/rvm"
       sudo "rvm requirements"

@@ -23,7 +23,13 @@ namespace :config do
   end
 
   task :env do
-    template "../../../#{fetch(:env_file)}", "#{fetch(:shared_path)}/#{fetch(:env_file)}"
+    env_file_path = "../../../#{fetch(:env_file)}"
+
+    if File.exist?("#{fetch(:templates_path)}/#{env_file_path}")
+      template env_file_path, "#{fetch(:shared_path)}/#{fetch(:env_file)}"
+    else
+      raise "You need to create #{env_file_path} file in the project root and set there all the ENV variables. At least SECRET_KEY_BASE. Generate with rake secret"
+    end
   end
 end
 
